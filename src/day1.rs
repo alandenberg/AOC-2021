@@ -7,10 +7,10 @@ fn main()
     let measurements = util::parse_lines_as_ints(&lines);
 
     let larger_than_previous = count_measurements_larger_than_previous(&measurements);
-    println!("Part 1: Measurements larger than previous: {}", larger_than_previous);
+    println!("Part 1: Solution={}", larger_than_previous);
 
     let triples_larger_than_previous = count_measurements_triples_larger_than_previous(&measurements);
-    println!("Part 2: Measurment triples larger than previous: {}", triples_larger_than_previous);
+    println!("Part 2: Solution={}", triples_larger_than_previous);
 }
 
 fn count_measurements_larger_than_previous(measurements: &Vec<i32>) -> i32
