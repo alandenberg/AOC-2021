@@ -37,7 +37,7 @@ pub fn parse_lines_as_ints(lines: &Vec<String>) -> Vec<i32>
     let mut ints: Vec<i32> = vec![];
     for line in lines
     {
-        let number = line.parse::<i32>().unwrap();
+        let number = line.trim().parse::<i32>().unwrap();
         ints.push(number);
     }
 

@@ -33,7 +33,7 @@ fn get_position(lines: &Vec<String>, use_aim: bool) -> Position
     {
         let words: Vec<String> = line.split(" ").map(String::from).collect();
         let movement: &String = &words[0];
-        let value: i32 = words[1].parse::<i32>().unwrap();
+        let value: i32 = words[1].trim().parse::<i32>().unwrap();
         if movement == "forward"
         {
             position.forward += value;
@@ -70,7 +70,7 @@ fn get_position(lines: &Vec<String>, use_aim: bool) -> Position
 }
 
 #[test]
-fn test_day1_part1_example()
+fn test_day2_part1_example()
 {
     let input: String = "
 forward 5
@@ -89,7 +89,7 @@ forward 2
 }
 
 #[test]
-fn test_day1_part1_solution()
+fn test_day2_part1_solution()
 {
     let input = util::read_input_file("day2.txt");
     let lines = util::get_lines_from_string(input, "\n");
@@ -101,7 +101,7 @@ fn test_day1_part1_solution()
 }
 
 #[test]
-fn test_day1_part2_example()
+fn test_day2_part2_example()
 {
     let input: String = "
 forward 5
@@ -120,7 +120,7 @@ forward 2
 }
 
 #[test]
-fn test_day1_part2_solution()
+fn test_day2_part2_solution()
 {
     let input = util::read_input_file("day2.txt");
     let lines = util::get_lines_from_string(input, "\n");
