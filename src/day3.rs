@@ -3,7 +3,7 @@ mod util;
 fn main()
 {
     let input = util::read_input_file("day3.txt");
-    let lines = util::get_lines_from_string(input, "\n");
+    let lines = util::split_string_by_string(input, "\n");
     
     let columns = extract_all_bits_column_wise(&lines);
     let gamma_rate = get_gamma_rate(&columns);
@@ -174,7 +174,7 @@ fn test_day3_part1_example()
 11001
 00010
 01010".to_string();
-    let lines = util::get_lines_from_string(input, "\n");
+    let lines = util::split_string_by_string(input, "\n");
 
     let columns = extract_all_bits_column_wise(&lines);
     let gamma_rate = get_gamma_rate(&columns);
@@ -188,7 +188,7 @@ fn test_day3_part1_example()
 fn test_day3_part1_solution()
 {
     let input = util::read_input_file("day3.txt");
-    let lines = util::get_lines_from_string(input, "\n");
+    let lines = util::split_string_by_string(input, "\n");
     
     let columns = extract_all_bits_column_wise(&lines);
     let gamma_rate = get_gamma_rate(&columns);
@@ -213,7 +213,7 @@ fn test_day3_part2_example()
 11001
 00010
 01010".to_string();
-    let lines = util::get_lines_from_string(input, "\n");
+    let lines = util::split_string_by_string(input, "\n");
 
     let oxygen_generator_rating = get_oxygen_generator_rating(&lines);
     let co2_scrubber_rating = get_co2_scrubber_rating(&lines);
@@ -226,7 +226,7 @@ fn test_day3_part2_example()
 fn test_day3_part2_solution()
 {
     let input = util::read_input_file("day3.txt");
-    let lines = util::get_lines_from_string(input, "\n");
+    let lines = util::split_string_by_string(input, "\n");
     
     let oxygen_generator_rating = get_oxygen_generator_rating(&lines);
     let co2_scrubber_rating = get_co2_scrubber_rating(&lines);

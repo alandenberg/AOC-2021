@@ -9,7 +9,7 @@ struct Position
 fn main()
 {
     let input = util::read_input_file("day2.txt");
-    let lines = util::get_lines_from_string(input, "\n");
+    let lines = util::split_string_by_string(input, "\n");
     
     let position = get_position(&lines, false);
 
@@ -80,7 +80,7 @@ up 3
 down 8
 forward 2
 ".to_string();
-    let lines = util::get_lines_from_string(input, "\n");
+    let lines = util::split_string_by_string(input, "\n");
     
     let position = get_position(&lines, false);
 
@@ -92,7 +92,7 @@ forward 2
 fn test_day2_part1_solution()
 {
     let input = util::read_input_file("day2.txt");
-    let lines = util::get_lines_from_string(input, "\n");
+    let lines = util::split_string_by_string(input, "\n");
     
     let position = get_position(&lines, false);
 
@@ -111,7 +111,7 @@ up 3
 down 8
 forward 2
 ".to_string();
-    let lines = util::get_lines_from_string(input, "\n");
+    let lines = util::split_string_by_string(input, "\n");
     
     let position = get_position(&lines, true);
 
@@ -123,7 +123,7 @@ forward 2
 fn test_day2_part2_solution()
 {
     let input = util::read_input_file("day2.txt");
-    let lines = util::get_lines_from_string(input, "\n");
+    let lines = util::split_string_by_string(input, "\n");
     
     let position = get_position(&lines, true);
 

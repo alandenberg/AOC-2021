@@ -23,7 +23,7 @@ pub fn read_input_file(input_file: &str) -> String
 }
 
 #[allow(dead_code)]
-pub fn get_lines_from_string(contents: String, split_by: &str) -> Vec<String>
+pub fn split_string_by_string(contents: String, split_by: &str) -> Vec<String>
 {
     let mut lines: Vec<String> = contents.split(split_by).map(String::from).collect();
     lines.retain(|x| !x.is_empty());
@@ -32,7 +32,7 @@ pub fn get_lines_from_string(contents: String, split_by: &str) -> Vec<String>
 }
 
 #[allow(dead_code)]
-pub fn parse_lines_as_ints(lines: &Vec<String>) -> Vec<i32>
+pub fn parse_strings_as_ints(lines: &Vec<String>) -> Vec<i32>
 {
     let mut ints: Vec<i32> = vec![];
     for line in lines
