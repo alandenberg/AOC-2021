@@ -23,10 +23,19 @@ pub fn read_input_file(input_file: &str) -> String
 }
 
 #[allow(dead_code)]
-pub fn split_string_by_string(contents: String, split_by: &str) -> Vec<String>
+pub fn split_string_by_string(contents: &String, split_by: &str) -> Vec<String>
 {
     let mut lines: Vec<String> = contents.split(split_by).map(String::from).collect();
     lines.retain(|x| !x.is_empty());
+
+    return lines;
+}
+
+#[allow(dead_code)]
+pub fn split_ints_by_string(contents: &String, split_by: &str) -> Vec<i32>
+{
+    let mut lines: Vec<i32> = contents.split(split_by).map(|x| x.trim().parse::<i32>().unwrap_or_else(|_y| -1)).collect();
+    lines.retain(|x| x >= &0);
 
     return lines;
 }

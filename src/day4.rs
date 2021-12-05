@@ -92,7 +92,7 @@ impl BingoLogicPrivate for BingoBoard
 fn main()
 {
     let input = util::read_input_file("day4.txt");
-    let parts = util::split_string_by_string(input, "\n\n");
+    let parts = util::split_string_by_string(&input, "\n\n");
 
     let score = get_first_winning_score(&parts);
     println!("Part 1: Solution={}", score);
@@ -166,7 +166,7 @@ fn get_last_winning_score(parts: &Vec<String>) -> i32
 
 fn parse_bingo_boards(parts: &Vec<String>) -> (Vec<i32>, Vec<BingoBoard>)
 {
-    let drawn_number_strings = util::split_string_by_string(parts[0].to_string(), ",");
+    let drawn_number_strings = util::split_string_by_string(&parts[0], ",");
     let drawn_numbers = util::parse_strings_as_ints(&drawn_number_strings);
 
     let mut bingo_boards: Vec<BingoBoard> = vec![];
@@ -182,7 +182,7 @@ fn parse_bingo_boards(parts: &Vec<String>) -> (Vec<i32>, Vec<BingoBoard>)
 
 fn create_bingo_board(board_string: &String) -> BingoBoard
 {
-    let lines = util::split_string_by_string(board_string.to_string(), "\n");
+    let lines = util::split_string_by_string(board_string, "\n");
 
     let size: usize = lines.len();
     let mut numbers: Vec<Vec<i32>> = vec![vec![0; size]; size];
@@ -190,7 +190,7 @@ fn create_bingo_board(board_string: &String) -> BingoBoard
 
     for i in 0..size
     {
-        let number_strings = util::split_string_by_string(lines[i].to_string(), " ");
+        let number_strings = util::split_string_by_string(&lines[i], " ");
         assert_eq!(number_strings.len(), size);
 
         for j in 0..size
@@ -225,7 +225,7 @@ fn test_day4_part1_example()
 18  8 23 26 20
 22 11 13  6  5
 2  0 12  3  7".to_string();
-    let parts = util::split_string_by_string(input, "\n\n");
+    let parts = util::split_string_by_string(&input, "\n\n");
 
     let score = get_first_winning_score(&parts);
 
@@ -236,7 +236,7 @@ fn test_day4_part1_example()
 fn test_day4_part1_solution()
 {
     let input = util::read_input_file("day4.txt");
-    let parts = util::split_string_by_string(input, "\n\n");
+    let parts = util::split_string_by_string(&input, "\n\n");
 
     let score = get_first_winning_score(&parts);
 
@@ -266,7 +266,7 @@ fn test_day4_part2_example()
 18  8 23 26 20
 22 11 13  6  5
 2  0 12  3  7".to_string();
-    let parts = util::split_string_by_string(input, "\n\n");
+    let parts = util::split_string_by_string(&input, "\n\n");
 
     let score = get_last_winning_score(&parts);
 
@@ -277,7 +277,7 @@ fn test_day4_part2_example()
 fn test_day4_part2_solution()
 {
     let input = util::read_input_file("day4.txt");
-    let parts = util::split_string_by_string(input, "\n\n");
+    let parts = util::split_string_by_string(&input, "\n\n");
 
     let score = get_last_winning_score(&parts);
 

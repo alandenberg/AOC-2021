@@ -3,7 +3,7 @@ mod util;
 fn main()
 {
     let input = util::read_input_file("day1.txt");
-    let lines = util::split_string_by_string(input, "\n");
+    let lines = util::split_string_by_string(&input, "\n");
     let measurements = util::parse_strings_as_ints(&lines);
 
     let larger_than_previous = count_measurements_larger_than_previous(&measurements);
@@ -60,7 +60,7 @@ fn test_day1_part1_example()
 fn test_day1_part1_solution()
 {
     let input = util::read_input_file("day1.txt");
-    let lines = util::split_string_by_string(input, "\n");
+    let lines = util::split_string_by_string(&input, "\n");
     let measurements = util::parse_strings_as_ints(&lines);
 
     let larger_than_previous = count_measurements_larger_than_previous(&measurements);
@@ -82,7 +82,7 @@ fn test_day1_part2_example()
 fn test_day1_part2_solution()
 {
     let input = util::read_input_file("day1.txt");
-    let lines = util::split_string_by_string(input, "\n");
+    let lines = util::split_string_by_string(&input, "\n");
     let measurements = util::parse_strings_as_ints(&lines);
 
     let larger_than_previous = count_measurements_triples_larger_than_previous(&measurements);
