@@ -1,4 +1,5 @@
 use std::fs;
+use std::str::FromStr;
 
 #[allow(dead_code)]
 pub fn read_input_file(input_file: &str) -> String
@@ -38,6 +39,12 @@ pub fn split_ints_by_string(contents: &String, split_by: &str) -> Vec<i32>
     lines.retain(|x| x >= &0);
 
     return lines;
+}
+
+#[allow(dead_code)]
+pub fn split_generics_by_string<T>(contents: &String, split_by: &str) -> Vec<T> where T: FromStr
+{
+    return contents.split(split_by).filter_map(|x| x.trim().parse::<T>().ok()).collect();
 }
 
 #[allow(dead_code)]

@@ -11,7 +11,7 @@ fn main()
     let dest = Path::new(&target_dir);
     copy_dir_all(src, dest).expect("Could not copy files from data directory");
     println!("cargo:rerun-if-changed=build.rs");
-    println!("cargo:rerun-if-changed=cargo.lock");
+    println!("cargo:rerun-if-changed=cargo.lock"); 
     println!("cargo:rerun-if-changed=cargo.toml");
 }
 
