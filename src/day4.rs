@@ -96,6 +96,9 @@ fn main()
 
     let score = get_first_winning_score(&parts);
     println!("Part 1: Solution={}", score);
+
+    let last_score = get_last_winning_score(&parts);
+    println!("Part 2: Solution={}", last_score);
 }
 
 fn get_first_winning_score(parts: &Vec<String>) -> i32
