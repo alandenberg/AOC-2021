@@ -4,6 +4,9 @@ version = "0.1.0"
 authors = ["André von Landenberg <andre@vonlandenberg.de>"]
 edition = "2021"
 
+[dependencies]
+itertools = "0.10.3"
+
 [[bin]]
 name = "day1"
 path = "src/day1.rs"
@@ -31,3 +34,7 @@ path = "src/day6.rs"
 [[bin]]
 name = "day7"
 path = "src/day7.rs"
+
+[[bin]]
+name = "day8"
+path = "src/day8.rs"
