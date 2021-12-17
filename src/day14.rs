@@ -1,5 +1,6 @@
 use std::collections::HashMap;
 use substring::Substring;
+use std::cmp;
 
 mod util;
 
@@ -9,9 +10,11 @@ fn main() {
     let polymers = lines.remove(0);
     let rules = parse_insertion_rules(&lines);
 
-    let result = perform_polymerization(&polymers, &rules, 10);
-    let (min_polymer, max_polymer) = find_least_and_most_common_polymer(&result);
-    println!("Part 1: Solution={}", max_polymer - min_polymer);
+    let (min, max) = perform_polymerization(&polymers, &rules, 10);
+    println!("Part 1: Solution={}", max - min);
+
+    let (min, max) = perform_polymerization(&polymers, &rules, 40);
+    println!("Part 2: Solution={}", max - min);
 }
 
 fn parse_insertion_rules(lines: &Vec<String>) -> Vec<(&str, &str)> {
@@ -26,46 +29,67 @@ fn parse_insertion_rules(lines: &Vec<String>) -> Vec<(&str, &str)> {
     return rules;
 }
 
-fn perform_polymerization(polymers: &String, rules: &Vec<(&str, &str)>, steps: i32) -> String {
-    let mut result = String::from(polymers);
+fn perform_polymerization(polymers: &String, rules: &Vec<(&str, &str)>, steps: i32) -> (u64, u64) {
+    let mut pairs: HashMap<String, u64> = HashMap::new();
+
+    for i in 0..polymers.len() {
+        let end = cmp::min(i+2, polymers.len());
+        let pair = String::from(polymers.substring(i, end));
+        if !pairs.contains_key(&pair) {
+            pairs.insert(pair, 1);
+        } else {
+            pairs.insert(pair.to_string(), pairs[&pair]+1);
+        }
+    }
 
     for _ in 0..steps {
-        let mut step_result = String::new();
-        
-        for i in 0..result.len()-1
-        {
-            let pair = result.substring(i, i + 2);
-            step_result += pair.substring(0, 1);
+        let step_pairs = pairs.clone();
+        pairs.clear();
 
-            for rule in rules {
-                if pair == rule.0 {
-                    step_result += rule.1;
-                    break;
-                }
+        for pair in step_pairs.keys() {
+            match rules.iter().find(|x| &x.0 == pair) {
+                Some(rule) => {
+                    let mut pair1 = String::from(pair.chars().nth(0).unwrap());
+                    pair1 += rule.1;
+                    let mut pair2 = String::from(rule.1);
+                    pair2.push(pair.chars().nth(1).unwrap());
+
+                    if !pairs.contains_key(&pair1) {
+                        pairs.insert(pair1, step_pairs[pair]);
+                    } else {
+                        pairs.insert(pair1.to_string(), pairs[&pair1]+step_pairs[pair]);
+                    }
+
+                    if !pairs.contains_key(&pair2) {
+                        pairs.insert(pair2, step_pairs[pair]);
+                    } else {
+                        pairs.insert(pair2.to_string(), pairs[&pair2]+step_pairs[pair]);
+                    }
+                },
+                None => {
+                    if !pairs.contains_key(pair) {
+                        pairs.insert(pair.to_string(), step_pairs[pair]);
+                    } else {
+                        pairs.insert(pair.to_string(), pairs[pair]+step_pairs[pair]);
+                    }
+                },
             }
         }
-
-        step_result += result.substring(result.len()-1, result.len());
-        result = step_result;
     }
 
-    return result;
-}
+    let mut polymer_count: HashMap<char, u64> = HashMap::new();
+    for pair in pairs {
+        let polymer = pair.0.chars().nth(0).unwrap();
 
-fn find_least_and_most_common_polymer(polymers: &String) -> (u64, u64) {
-    let mut count: HashMap<char, u64> = HashMap::new();
-
-    for polymer in polymers.chars() {
-        if !count.contains_key(&polymer) {
-            count.insert(polymer, 1);
+        if !polymer_count.contains_key(&polymer) {
+            polymer_count.insert(polymer, pair.1);
         } else {
-            let value = count.get(&polymer).unwrap();
-            count.insert(polymer, value + 1);
+            polymer_count.insert(polymer, polymer_count[&polymer]+pair.1);
         }
     }
 
-    let min = count.values().min().unwrap();
-    let max = count.values().max().unwrap();
+    let min = polymer_count.values().min().unwrap();
+    let max = polymer_count.values().max().unwrap();
 
     return (*min, *max);
 }
@@ -93,9 +117,10 @@ CN -> C");
     let mut lines = util::split_string_by_string(&input, "\n");
     let polymers = lines.remove(0);
     let rules = parse_insertion_rules(&lines);
-    let result = perform_polymerization(&polymers, &rules, 4);
+    let (min, max) = perform_polymerization(&polymers, &rules, 4);
 
-    assert_eq!(result, "NBBNBNBBCCNBCNCCNBBNBBNBBBNBBNBBCBHCBHHNHCBBCBHCB");
+    assert_eq!(min, 5);
+    assert_eq!(max, 23);
 }
 
 #[test]
@@ -104,9 +129,20 @@ fn test_day14_part1_solution() {
     let mut lines = util::split_string_by_string(&input, "\n");
     let polymers = lines.remove(0);
     let rules = parse_insertion_rules(&lines);
-    let result = perform_polymerization(&polymers, &rules, 10);
-    let (min_polymer, max_polymer) = find_least_and_most_common_polymer(&result);
+    let (min, max) = perform_polymerization(&polymers, &rules, 10);
+    
+    assert_eq!(min, 649);
+    assert_eq!(max, 4480);
+}
 
-    assert_eq!(min_polymer, 649);
-    assert_eq!(max_polymer, 4480);
+#[test]
+fn test_day14_part2_solution() {
+    let input = util::read_input_file("day14.txt");
+    let mut lines = util::split_string_by_string(&input, "\n");
+    let polymers = lines.remove(0);
+    let rules = parse_insertion_rules(&lines);
+    let (min, max) = perform_polymerization(&polymers, &rules, 40);
+    
+    assert_eq!(min, 362729313279);
+    assert_eq!(max, 6088469227561);
 }
