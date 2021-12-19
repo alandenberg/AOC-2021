@@ -1,12 +1,37 @@
 use bitbuffer::{BitReadBuffer, BigEndian, BitReadStream};
+use substring::Substring;
 
 mod util;
 
 fn main() {
     let input = util::read_input_file("day16.txt").trim().to_string();
     let packet = parse_packet(&input);
+
     let version_sum = sum_packet_versions(&packet);
     println!("Part 1: Solution={}", version_sum);
+
+    let operator_result = execute_packet_operators(&packet);
+    println!("Part 2: Solution={}", operator_result);
+}
+
+#[derive(Clone, Copy, Debug, PartialEq)]
+enum Operator {
+    Sum,
+    Product,
+    Minimum,
+    Maximum,
+    Literal,
+    GreaterThan,
+    LessThan,
+    EqualTo,
+}
+
+#[derive(Clone, Debug)]
+struct Packet {
+    version: u8,
+    operator: Operator,
+    sub_packets: Vec<Packet>,
+    literal_value: u64,
 }
 
 fn hex_to_binary(c: char) -> u8 {
@@ -31,22 +56,30 @@ fn hex_to_binary(c: char) -> u8 {
     }
 }
 
-#[derive(Clone, Debug)]
-struct Packet {
-    version: u8,
-    type_id: u8,
-    sub_packets: Vec<Packet>,
+fn type_id_to_operator(type_id: u8) -> Operator {
+    return match type_id {
+        0 => Operator::Sum,
+        1 => Operator::Product,
+        2 => Operator::Minimum,
+        3 => Operator::Maximum,
+        4 => Operator::Literal,
+        5 => Operator::GreaterThan,
+        6 => Operator::LessThan,
+        7 => Operator::EqualTo,
+        _ => panic!("illegaly type id {}", type_id),
+    }
 }
 
 #[allow(unused_must_use)]
 fn read_next_packet(stream: &mut BitReadStream<BigEndian>) -> Packet {
     let mut sub_packets = vec![];
+    let mut literal_value: u64 = 0;
 
     let packet_version = stream.read_int::<u8>(3).unwrap();
     let packet_type = stream.read_int::<u8>(3).unwrap();
-    let is_operator = packet_type != 4;
+    let operator = type_id_to_operator(packet_type);
 
-    if is_operator {
+    if operator != Operator::Literal {
         let length_type_id = stream.read_int::<u8>(1).unwrap();
 
         if length_type_id == 0 {
@@ -64,6 +97,7 @@ fn read_next_packet(stream: &mut BitReadStream<BigEndian>) -> Packet {
             }
         }
     } else {
+        let mut literal_string = String::new();
         loop {
             if stream.bits_left() < 5
             {
@@ -76,15 +110,19 @@ fn read_next_packet(stream: &mut BitReadStream<BigEndian>) -> Packet {
             }
 
             let is_last_group = stream.read_int::<u8>(1).unwrap() == 0;
-            let group_data = stream.read_int::<u8>(4).unwrap();
+            let value = stream.read_int::<u8>(4).unwrap();
+            let value_string = &format!("{:#06b}", value);
+            literal_string += value_string.substring(2, value_string.len());
 
             if is_last_group {
                 break;
             }
         }
+
+        literal_value = u64::from_str_radix(&literal_string, 2).unwrap();
     }
 
-    return Packet { version: packet_version, type_id: packet_type, sub_packets: sub_packets };
+    return Packet { version: packet_version, operator: operator, sub_packets: sub_packets, literal_value: literal_value };
 }
 
 fn parse_packet(line: &String) -> Packet {
@@ -112,6 +150,25 @@ fn sum_packet_versions(packet: &Packet) -> u64 {
     }
 
     return sum;
+}
+
+fn execute_packet_operators(packet: &Packet) -> u64 {
+    if packet.operator == Operator::Literal {
+        return packet.literal_value;
+    }
+
+    let sub_packets: Vec<u64> = packet.sub_packets.iter().map(execute_packet_operators).collect();
+
+    return match packet.operator {
+        Operator::Sum => sub_packets.iter().sum(),
+        Operator::Product => sub_packets.iter().product(),
+        Operator::Minimum => *sub_packets.iter().min().unwrap(),
+        Operator::Maximum => *sub_packets.iter().max().unwrap(),
+        Operator::Literal => packet.literal_value,
+        Operator::GreaterThan => if sub_packets[0] > sub_packets[1] { 1 } else { 0 },
+        Operator::LessThan => if sub_packets[0] < sub_packets[1] { 1 } else { 0 },
+        Operator::EqualTo => if sub_packets[0] == sub_packets[1] { 1 } else { 0 },
+    }
 }
 
 #[test]
@@ -157,4 +214,85 @@ fn test_day16_part1_solution() {
     let version_sum = sum_packet_versions(&packet);
 
     assert_eq!(version_sum, 923);
+}
+
+#[test]
+fn test_day16_part2_example1() {
+    let input = String::from("C200B40A82");
+    let packet = parse_packet(&input);
+    let operator_result = execute_packet_operators(&packet);
+
+    assert_eq!(operator_result, 3);
+}
+
+#[test]
+fn test_day16_part2_example2() {
+    let input = String::from("04005AC33890");
+    let packet = parse_packet(&input);
+    let operator_result = execute_packet_operators(&packet);
+
+    assert_eq!(operator_result, 54);
+}
+
+#[test]
+fn test_day16_part2_example3() {
+    let input = String::from("880086C3E88112");
+    let packet = parse_packet(&input);
+    let operator_result = execute_packet_operators(&packet);
+
+    assert_eq!(operator_result, 7);
+}
+
+#[test]
+fn test_day16_part2_example4() {
+    let input = String::from("CE00C43D881120");
+    let packet = parse_packet(&input);
+    let operator_result = execute_packet_operators(&packet);
+
+    assert_eq!(operator_result, 9);
+}
+
+#[test]
+fn test_day16_part2_example5() {
+    let input = String::from("D8005AC2A8F0");
+    let packet = parse_packet(&input);
+    let operator_result = execute_packet_operators(&packet);
+
+    assert_eq!(operator_result, 1);
+}
+
+#[test]
+fn test_day16_part2_example6() {
+    let input = String::from("F600BC2D8F");
+    let packet = parse_packet(&input);
+    let operator_result = execute_packet_operators(&packet);
+
+    assert_eq!(operator_result, 0);
+}
+
+#[test]
+fn test_day16_part2_example7() {
+    let input = String::from("9C005AC2F8F0");
+    let packet = parse_packet(&input);
+    let operator_result = execute_packet_operators(&packet);
+
+    assert_eq!(operator_result, 0);
+}
+
+#[test]
+fn test_day16_part2_example8() {
+    let input = String::from("9C0141080250320F1802104A08");
+    let packet = parse_packet(&input);
+    let operator_result = execute_packet_operators(&packet);
+
+    assert_eq!(operator_result, 1);
+}
+
+#[test]
+fn test_day16_part2_solution() {
+    let input = util::read_input_file("day16.txt").trim().to_string();
+    let packet = parse_packet(&input);
+    let operator_result = execute_packet_operators(&packet);
+
+    assert_eq!(operator_result, 258888628940);
 }
